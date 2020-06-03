@@ -41,7 +41,8 @@ public struct Board {
 
     public subscript(index: Int) -> Int {
         get {
-            board[index]
+            precondition((0..<81).contains(index), "Index must be in range 0..<81")
+            return board[index]
         }
         set(newValue) {
             precondition((0..<81).contains(index), "Index must be in range 0..<81")
@@ -94,9 +95,7 @@ public struct Board {
             result = swapNumber(at: position, on: board, excluding: seen)
         } else {
             result = resolve(board: board, from: position + 1)
-            if result != nil {
-                return result
-            } else {
+            if result == nil {
                 result = swapNumber(at: position, on: board, excluding: seen)
             }
         }
@@ -108,12 +107,10 @@ public struct Board {
         // Row
         let rowStart = (position / 9) * 9
         for index in rowStart..<position {
-            precondition(index < position, "Index must be smaller than the current position")
             seen.insert(board[index])
         }
         // Column
         for index in stride(from: position % 9, to: position, by: 9) {
-            precondition(index < position, "Index must be smaller than the current position")
             seen.insert(board[index])
         }
         return seen
@@ -135,12 +132,9 @@ public struct Board {
                 var newBoard = board
                 newBoard.swapAt(position, searchPos)
                 result = resolve(board: newBoard, from: position + 1)
-                if let result = result {
-                    return result
-                }
             }
         } while result == nil
-        return nil
+        return result
     }
 
     static private func inSameSquare(_ first: Int, _ second: Int) -> Bool {
