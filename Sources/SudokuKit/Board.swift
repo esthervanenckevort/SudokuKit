@@ -85,33 +85,20 @@ public struct Board {
     }
 
     static private func resolve(board: [Int], from position: Int) -> [Int]? {
-        print("resolving \(position)")
         guard position < board.count else {
             return board
         }
         var result: [Int]?
         let seen = collectSeenNumbers(for: position, on: board)
         if seen.contains(board[position]) {
-            print("\(position) swap")
             result = swapNumber(at: position, on: board, excluding: seen)
-            print("\(position) swap \(result != nil ? "successful" : "failed")")
         } else {
-            print("\(position) step")
             result = resolve(board: board, from: position + 1)
             if result != nil {
-                print("\(position + 1) resolved")
                 return result
             } else {
-                print("\(position) force swap")
                 result = swapNumber(at: position, on: board, excluding: seen)
-                print("\(position) force swap \(result != nil ? "successful" : "failed")")
             }
-        }
-        print("\(position) done")
-        if let result = result {
-            print(Board(board: result))
-        } else {
-            print("nil")
         }
         return result
     }
@@ -142,9 +129,6 @@ public struct Board {
                 searchPos += 1
             }
             guard searchPos < board.count && Board.inSameSquare(position, searchPos) else {
-                print("no candidates for swap of \(position)")
-                print("\(Board(board: board))")
-                print("Seen: \(seen)")
                 return nil
             }
             if !seen.contains(board[searchPos]) {
@@ -156,8 +140,6 @@ public struct Board {
                 }
             }
         } while result == nil
-        print("no candidates for swap of \(position)")
-        print("\(Board(board: board))")
         return nil
     }
 

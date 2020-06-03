@@ -82,16 +82,17 @@ final class BoardTests: XCTestCase {
     }
 
     func testGenerateBoard() {
-        for iteration in 0..<10_000 {
-            print("========= \(iteration) =========")
-            guard let board = Board() else {
-                XCTFail("Should have generated a solution.")
-                return
-            }
-            if !board.isValidSolution() {
-                print(board)
-                XCTFail("Generated board should be a valid solution.")
-                return
+        measure {
+            for _ in 0..<1000 {
+                guard let board = Board() else {
+                    XCTFail("Should have generated a solution.")
+                    return
+                }
+                if !board.isValidSolution() {
+                    print(board)
+                    XCTFail("Generated board should be a valid solution.")
+                    return
+                }
             }
         }
     }
