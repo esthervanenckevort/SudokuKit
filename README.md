@@ -1,3 +1,4 @@
 # SudokuKit
 
-A description of this package.
+A Swift package to generate and solve Sudokus.
+

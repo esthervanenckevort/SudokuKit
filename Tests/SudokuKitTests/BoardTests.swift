@@ -1,3 +1,17 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// BoardTests.swift provides unit tests for Board.swift.
+
 import Foundation
 import XCTest
 import SudokuKit
@@ -76,8 +90,8 @@ final class BoardTests: XCTestCase {
             XCTAssert(value == results[index], "Result for index \(index) must be equal to the value in the array for the same index.")
         }
         for index in 0..<81 {
-            board[index] = 255
-            XCTAssert(board[index] == 255, "Board value must be successfully set to a different value.")
+            board[index] = 0
+            XCTAssert(board[index] == 0, "Board value must be successfully set to a different value.")
         }
     }
 
