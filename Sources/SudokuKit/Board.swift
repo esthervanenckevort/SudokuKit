@@ -17,7 +17,7 @@ import Foundation
 
 /// Sudoku board implementation.
 public struct Board {
-    private var board: [Int]
+    public private(set) var board: [Int]
     private let boardWidth = 9
     private let boardRange = 0..<81
     private let squareWidth = 3
