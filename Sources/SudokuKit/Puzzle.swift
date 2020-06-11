@@ -17,6 +17,7 @@ import Foundation
 /// Sudoku puzzle generator
 public struct Puzzle {
     public let puzzle: Board
+    public let solution: Board
 
 
     /// Initializer to generate a puzzle with the given number of or the closest option.
@@ -57,6 +58,7 @@ public struct Puzzle {
         guard let solution = Board() else {
             return nil
         }
+        self.solution = solution
         let solver = Solver()
         guard let puzzle = makePuzzle(board: solution, with: given) else {
             return nil
