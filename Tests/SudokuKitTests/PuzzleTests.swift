@@ -25,9 +25,9 @@ final class PuzzleTests: XCTestCase {
                 XCTFail("Failed to generate puzzle with \(given) given numbers.")
                 continue
             }
-            XCTAssert(puzzle.puzzle.board.filter { $0 != 0 }.count == given, "Puzzle should have \(given) given numbers.")
-            XCTAssert(solver.solve(puzzle: puzzle.puzzle).count == 1, "Puzzle must have exactly one solution.")
-            print(puzzle.puzzle)
+            XCTAssert(puzzle.board.board.filter { $0 != 0 }.count == given, "Puzzle should have \(given) given numbers.")
+            XCTAssert(solver.solve(puzzle: puzzle.board).count == 1, "Puzzle must have exactly one solution.")
+            print(puzzle.board)
         }
     }
 }

@@ -16,7 +16,7 @@ import Foundation
 
 /// Sudoku puzzle generator
 public struct Puzzle {
-    public let puzzle: Board
+    public let board: Board
     public let solution: Board
 
 
@@ -63,7 +63,7 @@ public struct Puzzle {
         guard let puzzle = makePuzzle(board: solution, with: given) else {
             return nil
         }
-        self.puzzle = puzzle
+        self.board = puzzle
 
     }
 }
