@@ -66,4 +66,12 @@ public struct Puzzle {
         self.board = puzzle
 
     }
+
+    public init?(board: Board) {
+        let solver = Solver()
+        let solutions = solver.solve(puzzle: board)
+        guard solutions.count == 1 else { return nil }
+        self.solution = solutions[0]
+        self.board = board
+    }
 }
