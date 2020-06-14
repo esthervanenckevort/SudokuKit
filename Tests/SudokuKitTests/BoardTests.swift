@@ -96,9 +96,10 @@ final class BoardTests: XCTestCase {
     }
 
     func testGenerateBoard() {
+        let sudoku = Sudoku()
         measure {
             for _ in 0..<1000 {
-                guard let board = Board() else {
+                guard let board = sudoku.generate() else {
                     XCTFail("Should have generated a solution.")
                     return
                 }

@@ -36,7 +36,7 @@ public struct Puzzle {
             while candidates.count > 0 {
                 let erase = candidates.removeLast()
                 puzzle[erase] = 0
-                let solutions = solver.solve(puzzle: puzzle)
+                let solutions = sudoku.solve(puzzle: puzzle)
                 if solutions.count == 1 {
                     if fixed.count + candidates.count == given {
                         return puzzle
@@ -54,12 +54,13 @@ public struct Puzzle {
             return nil
         }
 
+        let sudoku = Sudoku()
         precondition((17...46).contains(given), "The number of given positions should be in the range 17...46.")
-        guard let solution = Board() else {
+        guard let solution = sudoku.generate() else {
             return nil
         }
         self.solution = solution
-        let solver = Solver()
+
         guard let puzzle = makePuzzle(board: solution, with: given) else {
             return nil
         }
@@ -68,8 +69,8 @@ public struct Puzzle {
     }
 
     public init?(board: Board) {
-        let solver = Solver()
-        let solutions = solver.solve(puzzle: board)
+        let sudoku = Sudoku()
+        let solutions = sudoku.solve(puzzle: board)
         guard solutions.count == 1 else { return nil }
         self.solution = solutions[0]
         self.board = board

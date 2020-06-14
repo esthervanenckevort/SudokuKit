@@ -18,15 +18,16 @@ import SudokuKit
 
 final class PuzzleTests: XCTestCase {
     func testGeneratePuzzle() {
-        let solver = Solver()
-        for given in (25...46).reversed() {
-            print("Generate puzzle with \(given) given numbers.")
+        let sudoku = Sudoku()
+        let given = 25
+
+        measure {
             guard let puzzle = Puzzle(given: given) else {
                 XCTFail("Failed to generate puzzle with \(given) given numbers.")
-                continue
+                return
             }
             XCTAssert(puzzle.board.board.filter { $0 != 0 }.count == given, "Puzzle should have \(given) given numbers.")
-            XCTAssert(solver.solve(puzzle: puzzle.board).count == 1, "Puzzle must have exactly one solution.")
+            XCTAssert(sudoku.solve(puzzle: puzzle.board).count == 1, "Puzzle must have exactly one solution.")
             print(puzzle.board)
         }
     }
