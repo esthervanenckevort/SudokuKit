@@ -65,6 +65,7 @@ public struct PlayingBoard {
                 board[row][column] = .annotations(values)
             } else {
                 board[row][column] = .solution(value)
+                clear(mark: value, row: row, column: column)
             }
         case .solution(let currentValue):
             if value != currentValue {
@@ -72,12 +73,56 @@ public struct PlayingBoard {
                     board[row][column] = .annotations(Set([value]))
                 } else {
                     board[row][column] = .solution(value)
+                    clear(mark: value, row: row, column: column)
                 }
             } else {
                 board[row][column] = .annotations(Set.empty)
             }
         }
     }
+
+    private mutating func clear(mark: Int, row: Int, column: Int) {
+        enum Visit: CaseIterable {
+            case row, column, square
+        }
+
+        for visit in Visit.allCases {
+            for position in 0..<9 {
+                var currentRow: Int
+                var currentColumn: Int
+                switch visit {
+                case .row:
+                    currentRow = row
+                    currentColumn = position
+                case .column:
+                    currentRow = position
+                    currentColumn = column
+                case .square:
+                    let firstColumn = column / 3 * 3
+                    let firstRow = row / 3 * 3
+                    currentColumn = firstColumn + position % 3
+                    currentRow = firstRow + position / 3
+                }
+
+                guard currentColumn != column && currentRow == row else { continue }
+                switch board[currentRow][currentColumn] {
+                case .fixed:
+                    continue
+                case .annotations(var values):
+                    values.remove(mark)
+                    board[currentRow][currentColumn] = .annotations(values)
+                case .solution(let currentValue):
+                    if currentValue == mark {
+                        board[currentRow][currentColumn] = .annotations(.empty)
+                    }
+                }
+            }
+        }
+
+    }
+
+
+
 
     /// Submit the game as solved.
     /// - Returns: The game state, either GameState.solved or GameState.invaldi
