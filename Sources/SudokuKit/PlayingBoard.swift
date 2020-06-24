@@ -104,7 +104,7 @@ public struct PlayingBoard {
                     currentRow = firstRow + position / 3
                 }
 
-                guard currentColumn != column && currentRow == row else { continue }
+                guard !(currentColumn == column && currentRow == row) else { continue }
                 switch board[currentRow][currentColumn] {
                 case .fixed:
                     continue
