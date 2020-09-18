@@ -67,6 +67,7 @@ final class SolverTests: XCTestCase {
             }
         }
     }
+
     func testDiabolical() {
         let sudoku = Sudoku()
         measure {

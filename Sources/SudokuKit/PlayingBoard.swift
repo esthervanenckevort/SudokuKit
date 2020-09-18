@@ -82,28 +82,26 @@ public struct PlayingBoard {
     }
 
     private mutating func clear(mark: Int, row: Int, column: Int) {
-        enum Visit: CaseIterable {
+        enum Target: CaseIterable {
             case row, column, square
         }
 
-        for visit in Visit.allCases {
-            for position in 0..<9 {
-                var currentRow: Int
-                var currentColumn: Int
-                switch visit {
-                case .row:
-                    currentRow = row
-                    currentColumn = position
-                case .column:
-                    currentRow = position
-                    currentColumn = column
-                case .square:
-                    let firstColumn = column / 3 * 3
-                    let firstRow = row / 3 * 3
-                    currentColumn = firstColumn + position % 3
-                    currentRow = firstRow + position / 3
-                }
+        func convert(offset: Int, to target: Target) -> (row: Int, column: Int) {
+            switch target {
+            case .row:
+                return (row: row, column: offset)
+            case .column:
+                return (row: offset, column: column)
+            case .square:
+                let firstColumn = column / 3 * 3
+                let firstRow = row / 3 * 3
+                return (row: firstRow + offset / 3, column: firstColumn + offset % 3)
+            }
+        }
 
+        for target in Target.allCases {
+            for offset in 0..<9 {
+                let (currentRow, currentColumn) = convert(offset: offset, to: target)
                 guard !(currentColumn == column && currentRow == row) else { continue }
                 switch board[currentRow][currentColumn] {
                 case .fixed:
@@ -118,14 +116,11 @@ public struct PlayingBoard {
                 }
             }
         }
-
     }
 
 
-
-
     /// Submit the game as solved.
-    /// - Returns: The game state, either GameState.solved or GameState.invaldi
+    /// - Returns: The game state, either GameState.solved or GameState.invalid
     public mutating func submit() -> GameState {
         guard state == .playing else { return state }
         var solution = [Int]()
