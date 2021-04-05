@@ -12,7 +12,7 @@
 //
 // Solver.swift provides the a Solver for a standard Sudoku board.
 
-
+import Foundation
 /// Implementation of a Sudoku solver and generator.
 public struct Sudoku {
 
@@ -24,44 +24,23 @@ public struct Sudoku {
     /// - Parameter puzzle: the puzzle to solve.
     /// - Returns: An array of solutions for the puzzle.
     public func solve(puzzle: Board) -> [Board] {
-
-        /// Recursive solver.
-        /// - Parameters:
-        ///   - index: Index of the first cell to solve.
-        ///   - puzzle: The puzzle to solve.
-        /// - Returns: An array of solutions.
-        func solve(startingFrom startIndex: Int, puzzle: Board) -> [Board] {
-            precondition((0..<puzzle.board.count).contains(startIndex), "startingFrom index must be in range 0..<\(puzzle.board.count)")
-            var solutions = [Board]()
-            var index = startIndex
-            while puzzle[index] != 0 {
-                index += 1
-                guard index < 81 else {
-                    guard puzzle.isValidSolution() else {
-                        return []
-                    }
-                    return [puzzle]
-                }
+        var board = [[Int]]()
+        let columns = Int(sqrt(Double(puzzle.board.count)))
+        for index in 0..<puzzle.board.count {
+            if index % columns == 0 {
+                board.append([Int]())
             }
-            let used = Set(puzzle.getSquare(for: index) + puzzle.getColumn(for: index) + puzzle.getRow(for: index))
-            for number in 1...9 {
-                guard !used.contains(number) else {
-                    continue
-                }
-                var workingCopy = puzzle
-                workingCopy[index] = number
-
-                if startIndex == 80 {
-                    solutions.append(workingCopy)
-                } else {
-                    let result = solve(startingFrom: startIndex + 1, puzzle: workingCopy)
-                    solutions.append(contentsOf: result)
-                }
-            }
-            return solutions
+            let row = index / columns
+            board[row].append(puzzle.board[index])
         }
+        let dlx = try! SudokuDLX(board)
+        let solutions = dlx.solve()
+        return solutions.map { solution in
+            Board(board: solution.reduce([Int]()) { (board, row) -> [Int] in
+                return board + row
+            })
 
-        return solve(startingFrom: 0, puzzle: puzzle)
+        }
     }
 
     /// Generate a new random board with a valid solution. This implementation uses a random seed and

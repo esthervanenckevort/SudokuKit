@@ -22,55 +22,55 @@ struct IdGenerator {
     static var shared = IdGenerator()
 }
 
-public class DancingNode: Equatable {
+public class DancingNode: Equatable, CustomStringConvertible {
+    public var description: String {
+        "[\(column.value)]"
+    }
+
     public static func == (lhs: DancingNode, rhs: DancingNode) -> Bool {
         return rhs.id == lhs.id
     }
 
-    var left, right, top, bottom: DancingNode!
+    lazy var left = self
+    lazy var right = self
+    lazy var top = self
+    lazy var bottom = self
     var column: ColumnNode!
     let id = IdGenerator.shared.next()
 
-    init() {
-        left = self
-        right = self
-        top = self
-        bottom = self
-    }
-
-    func linkDown(_ node: DancingNode) -> DancingNode {
+    final func linkDown(_ node: DancingNode) -> DancingNode {
         node.bottom = self.bottom
-        node.bottom?.top = node
+        node.bottom.top = node
         node.top = self
         self.bottom = node
         return node
     }
 
-    func linkRight(_ node: DancingNode) -> DancingNode {
+    final func linkRight(_ node: DancingNode) -> DancingNode {
         node.right = self.right
-        node.right?.left = node
+        node.right.left = node
         node.left = self
         self.right = node
         return node
     }
 
-    func removeLeftRight() {
-        left?.right = right
-        right?.left = left
+    final func removeLeftRight() {
+        left.right = right
+        right.left = left
     }
 
-    func reinsertLeftRight() {
-        left?.right = self
-        right?.left = self
+    final func reinsertLeftRight() {
+        left.right = self
+        right.left = self
     }
 
-    func removeTopBottom() {
-        top?.bottom = bottom
-        bottom?.top = top
+    final func removeTopBottom() {
+        top.bottom = bottom
+        bottom.top = top
     }
 
-    func reinsertTopBottom() {
-        top?.bottom = self
-        bottom?.top = self
+    final func reinsertTopBottom() {
+        top.bottom = self
+        bottom.top = self
     }
 }

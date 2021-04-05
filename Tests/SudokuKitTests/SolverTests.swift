@@ -29,35 +29,12 @@ final class SolverTests: XCTestCase {
         4, 7, 3, 5, 2, 6, 8, 9, 1,
         8, 5, 1, 4, 3, 9, 7, 2, 6
     ]
-    private let board = Board(board: [
-        0, 0, 8, 2, 0, 0, 9, 0, 3,
-        3, 4, 2, 0, 9, 5, 0, 0, 7,
-        1, 9, 7, 0, 0, 0, 0, 0, 4,
-        0, 0, 5, 3, 1, 2, 4, 7, 9,
-        0, 0, 0, 0, 0, 0, 0, 0, 0,
-        2, 0, 0, 0, 7, 4, 5, 0, 0,
-        0, 2, 0, 0, 0, 1, 0, 0, 5,
-        0, 7, 0, 0, 0, 6, 8, 9, 1,
-        8, 0, 0, 4, 3, 0, 7, 0, 6
-    ])
 
-    /// Puzzle from SudokuWiki.org weekly 'Unsolvable'  [https://www.sudokuwiki.org/Weekly_Sudoku.asp]
-    private let diabolical = Board(board: [
-        4, 0, 0, 0, 0, 9, 2, 0, 0,
-        0, 0, 0, 0, 1, 0, 0, 8, 0,
-        0, 0, 5, 4, 0, 0, 0, 0, 6,
-        0, 0, 4, 2, 0, 0, 0, 0, 1,
-        0, 5, 0, 0, 3, 0, 0, 6, 0,
-        7, 0, 0, 0, 0, 5, 3, 0, 0,
-        5, 0, 0, 0, 0, 7, 6, 0, 0,
-        0, 9, 0, 0, 6, 0, 0, 0, 0,
-        0, 0, 2, 8, 0, 0, 0, 0, 7
 
-    ])
     func testSolve() {
         let sudoku = Sudoku()
         measure {
-            let results = sudoku.solve(puzzle: board)
+            let results = sudoku.solve(puzzle: Board.board11)
 
             XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
             if results.count == 1 {
@@ -68,10 +45,45 @@ final class SolverTests: XCTestCase {
         }
     }
 
+    func testSolveSimpleCases() {
+        let sudoku = Sudoku()
+        let boards = Board.simple()
+        measure {
+            for board in boards {
+                let results = sudoku.solve(puzzle: board)
+                XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
+            }
+        }
+    }
+    
+    func testSolveEasyCases() {
+        let sudoku = Sudoku()
+        for board in Board.easy() {
+            let results = sudoku.solve(puzzle: board)
+            XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
+        }
+    }
+
+    func testSolveIntermediateCases() {
+        let sudoku = Sudoku()
+        for board in Board.intermediate() {
+            let results = sudoku.solve(puzzle: board)
+            XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
+        }
+    }
+
+    func testSolveExpertCases() {
+        let sudoku = Sudoku()
+        for board in Board.expert() {
+            let results = sudoku.solve(puzzle: board)
+            XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
+        }
+    }
+
     func testDiabolical() {
         let sudoku = Sudoku()
         measure {
-            let results = sudoku.solve(puzzle: diabolical)
+            let results = sudoku.solve(puzzle: Board.board12)
             XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
         }
     }

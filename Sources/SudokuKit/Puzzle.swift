@@ -22,8 +22,8 @@ public struct Puzzle {
 
     /// Initializer to generate a puzzle with the given number of or the closest option.
     /// - Parameter given: the number of given cells
-    public init?(given: Int = 36) {
-        func makePuzzle(board: Board, with given: Int, candidates: [Int] = [Int](0..<81), fixed: [Int] = [Int]()) -> Board? {
+    public init?(given: Int = 36, size: Int = 81) {
+        func makePuzzle(board: Board, with given: Int, candidates: [Int] = [Int](0..<size), fixed: [Int] = [Int]()) -> Board? {
             guard fixed.count <= given else {
                 // Not possible to generate a puzzle with the requested number of given numbers.
                 return nil
@@ -55,7 +55,7 @@ public struct Puzzle {
         }
 
         let sudoku = Sudoku()
-        precondition((17...46).contains(given), "The number of given positions should be in the range 17...46.")
+//        precondition((17...46).contains(given), "The number of given positions should be in the range 17...46.")
         guard let solution = sudoku.generate() else {
             return nil
         }

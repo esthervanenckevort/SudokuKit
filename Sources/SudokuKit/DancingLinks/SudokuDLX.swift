@@ -13,7 +13,7 @@
 
 import Foundation
 
-public class SudokuDLX {
+public final class SudokuDLX {
     let size: Int
     let boxSize: Int
     let constraints = 4
@@ -63,12 +63,22 @@ public class SudokuDLX {
         return coverMatrix
     }
 
-    private func convertDLXListToGrid(_ solution: [DancingNode]) -> [[Int]] {
+    private func convertDLXListToGrid(_ solution: ContiguousArray<DancingNode>) -> [[Int]] {
         var result = [[Int]].init(repeating: [Int].init(repeating: 0, count: size), count: size)
         for node in solution {
-            let row = node.column!.value / size
-            let column = node.column!.value % size
-            let value = node.right!.column!.value % size + 1
+            var rcNode = node
+            var min = node.column.value
+            var tmp = node.right
+            while (tmp != node) {
+                if (tmp.column.value < min) {
+                    min = tmp.column.value
+                    rcNode = tmp
+                }
+                tmp = tmp.right
+            }
+            let row = rcNode.column!.value / size
+            let column = rcNode.column!.value % size
+            let value = rcNode.right.column!.value % size + 1
             result[row][column] = value
         }
         return result

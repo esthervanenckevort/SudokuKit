@@ -18,19 +18,53 @@ import Foundation
 /// Sudoku board implementation.
 public struct Board {
     public private(set) var board: [Int]
-    private let boardWidth = 9
-    private let boardRange = 0..<81
-    private let squareWidth = 3
+    /// The valid values of the Sudoku, for a typical 9x9 Sudoku this will be 1...9
+    private var numbers: ClosedRange<Int> { 1...columns }
+    /// The width of the Sudoku board, for a typical 9x9 Sudoku this will be 9
+    private var columns: Int { Int(sqrt(Double(board.count))) }
+    /// The height of the Sudoku board, for a typical 9x9 Sudoku this will be 9
+    private var rows: Int { columns }
+    /// The width of a single Square, for the typical 9x9 Sudoku this will be 3
+    private var widthOfSquare: Int { Int(sqrt(Double(columns))) }
+    /// The height of a single Square, for the typical 9x9 Sudoku this will be 3
+    private var heightOfSquare: Int { widthOfSquare }
+    /// The number of squares in a row, for the typical 9x9 Sudoku this will be 3
+    private var squaresInRow: Int { widthOfSquare }
+    /// The nukber of squares in a column, for the typical 9x9 Sudoku this will be 3
+    private var squaresInColumn: Int { widthOfSquare }
+    /// The offset of a row of squares, for the typical 9x9 Sudoku this will be 9*3 = 27
+    private var squareRowOffset: Int { columns * widthOfSquare }
+
+
+
+    /// Initialize a board with the given array.
+    ///
+    /// - Parameter board: an array containing an existing board with the numbers 0 - 9, where 0
+    ///                    indicates an empty field.
+    public init(board: [Int]) {
+        self.board = board
+        let count = columns * columns
+        let possibleValues = 0...columns
+
+        precondition(board.count == count, "Board must have exactly \(count) elements.")
+        precondition(board.reduce(true) { possibleValues.contains($1) }, "Board must only contain elements in the range 0...\(columns)")
+
+    }
 
     /// Get the numbers in the square for the given position.
     /// - Parameter index: The position in the range 0...80 for which to retreive the square.
     /// - Returns: An array with the nine values in rowwise order
     public func getSquare(for index: Int) -> [Int] {
-        precondition((0..<81).contains(index), "Index must be in range 0..<81")
-        let squareInRow = index % boardWidth / 3
-        let topLeftIndex = squareInRow * 3 + (index / 27) * 27
-        let offsets = [0, 1, 2, 9, 10, 11, 18, 19, 20]
-        var elements = Array<Int>.init(repeating: 0, count: 9)
+        precondition((0..<board.count).contains(index), "Index must be in range \(0..<board.count)")
+        let squareInRow = index % columns / widthOfSquare
+        let topLeftIndex = squareInRow * widthOfSquare + (index / squareRowOffset) * squareRowOffset
+        var offsets = [Int]()
+        for row in 0..<heightOfSquare {
+            for column in 0..<widthOfSquare {
+                offsets.append(column + row * columns)
+            }
+        }
+        var elements = Array<Int>.init(repeating: 0, count: columns)
         for (index, offset) in offsets.enumerated() {
             elements[index] = board[topLeftIndex + offset]
         }
@@ -42,11 +76,11 @@ public struct Board {
     /// - Parameter index: The position in the range 0...80 for which to retreive the row.
     /// - Returns: An array with the nine values from left to right.
     public func getRow(for index: Int) -> [Int] {
-        precondition((0..<81).contains(index), "Index must be in range 0..<81")
-        var elements = Array<Int>.init(repeating: 0, count: 9)
-        let row = index / boardWidth
-        let startIndex = row * boardWidth
-        for index in 0..<9 {
+        precondition((0..<board.count).contains(index), "Index must be in range 0..<\(board.count)")
+        var elements = Array<Int>.init(repeating: 0, count: columns)
+        let row = index / columns
+        let startIndex = row * columns
+        for index in 0..<columns {
             elements[index] = board[startIndex + index]
         }
         return elements
@@ -56,11 +90,11 @@ public struct Board {
     /// - Parameter index: The position in the range 0...80 for which to retreive the column
     /// - Returns: An array with the nine values from top to bottom.
     public func getColumn(for index: Int) -> [Int] {
-        precondition((0..<81).contains(index), "Index must be in range 0..<81")
-        let startIndex = index % boardWidth
-        var elements = Array<Int>.init(repeating: 0, count: boardWidth)
-        for offset in 0..<9 {
-            elements[offset] = board[startIndex + offset * boardWidth]
+        precondition((0..<board.count).contains(index), "Index must be in range 0..<\(board.count)")
+        let startIndex = index % columns
+        var elements = Array<Int>.init(repeating: 0, count: columns)
+        for offset in 0..<columns {
+            elements[offset] = board[startIndex + offset * columns]
         }
         return elements
     }
@@ -68,49 +102,40 @@ public struct Board {
     /// Direct access to the board
     public subscript(index: Int) -> Int {
         get {
-            precondition((0..<81).contains(index), "Index must be in range 0..<81")
+            precondition((0..<board.count).contains(index), "Index must be in range 0..<\(board.count)")
             return board[index]
         }
         set(newValue) {
-            precondition((0..<81).contains(index), "Index must be in range 0..<81")
-            precondition((0...9).contains(newValue), "The new value must be in the range 0...9")
+            precondition((0..<board.count).contains(index), "Index must be in range 0..<\(board.count)")
+            precondition((0...columns).contains(newValue), "The new value must be in the range 0...\(columns)")
             board[index] = newValue
         }
     }
-
-    /// Initialize a board with the given array.
-    ///
-    /// - Parameter board: an array containing an existing board with the numbers 0 - 9, where 0
-    ///                    indicates an empty field.
-    public init(board: [Int]) {
-        precondition(board.count == 81, "Board must have exactly 81 elements.")
-        precondition(board.reduce(true) { (0...9).contains($1) }, "Board must only contain elements in the range 0...9")
-        self.board = board
-    }
-
 
     /// Check if this board is a valid solution.
     /// - Returns: true if the board is a valid solution, which means all fields are filled with a number in
     ///            the range 1...9 and each row and each column contains each of the numbers only
     ///            once.
     public func isValidSolution() -> Bool {
-        let numbers = Set([1, 2, 3, 4, 5, 6, 7, 8, 9])
-        for index in stride(from: 0, through: 80, by: 9) {
+        let numbers = Set(self.numbers)
+        for index in stride(from: 0, to: board.count, by: columns) {
             let row = Set(getRow(for: index))
             if numbers != row {
                 return false
             }
         }
-        for index in 0..<9 {
+        for index in 0..<columns {
             let column = Set(getColumn(for: index))
             if numbers != column {
                 return false
             }
         }
-        for index in [0, 3, 6, 27, 30, 33, 54, 57, 60] {
-            let square = Set(getSquare(for: index))
-            if numbers != square {
-                return false
+        for row in 0..<squaresInColumn {
+            for index in stride(from: 0, to: columns, by: widthOfSquare) {
+                let square = Set(getSquare(for: index + row * squareRowOffset))
+                if numbers != square {
+                    return false
+                }
             }
         }
         return true
@@ -122,16 +147,27 @@ extension Board: CustomStringConvertible {
     /// Description of the board. A 9 x 9 square divided in 9 3 x 3 squares with the numbers 0...9 printed.
     public var description: String {
         var workingCopy = ""
-        for index in 0..<81 {
-            workingCopy += " \(board[index] )"
-            if index % 9 == 2 || index % 9 == 5 {
-                workingCopy += "|"
-            }
-            if index % 9 == 8 {
+        for index in 0..<board.count {
+            workingCopy += " \(board[index])"
+            switch index {
+            case board.count - 1:
+                break
+            case (let x) where x % columns == columns - 1:
                 workingCopy += "\n"
-            }
-            if index % 27 == 26 && index != 80  {
-                workingCopy += "------+------+------\n"
+                if x % squareRowOffset == squareRowOffset - 1 {
+                    for square in 0..<widthOfSquare {
+                        workingCopy += String(Array(repeating: "-", count: widthOfSquare * 2))
+                        if square == widthOfSquare - 1 {
+                            workingCopy += "\n"
+                        } else {
+                            workingCopy += "+"
+                        }
+                    }
+                }
+            case (let x) where x % widthOfSquare == widthOfSquare - 1:
+                workingCopy += "|"
+            default:
+                break
             }
         }
         return workingCopy

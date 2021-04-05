@@ -13,7 +13,7 @@
 
 import Foundation
 
-class ColumnNode: DancingNode {
+final class ColumnNode: DancingNode {
     var size: Int
     let value: Int
 
@@ -28,26 +28,26 @@ class ColumnNode: DancingNode {
         removeLeftRight()
         var bottomNode = bottom
         while (bottomNode != self) {
-            var rightNode = bottomNode?.right
+            var rightNode = bottomNode.right
             while (rightNode != bottomNode) {
-                rightNode?.removeTopBottom()
-                rightNode?.column?.size -= 1
-                rightNode = rightNode?.right
+                rightNode.removeTopBottom()
+                rightNode.column.size -= 1
+                rightNode = rightNode.right
             }
-            bottomNode = bottomNode?.bottom
+            bottomNode = bottomNode.bottom
         }
     }
 
     func uncover() {
         var topNode = top
         while (topNode != self) {
-            var leftNode = topNode?.left
+            var leftNode = topNode.left
             while (leftNode != topNode) {
-                right?.column?.size += 1
-                leftNode?.reinsertTopBottom()
-                leftNode = leftNode?.left
+                right.column.size += 1
+                leftNode.reinsertTopBottom()
+                leftNode = leftNode.left
             }
-            topNode = topNode?.top
+            topNode = topNode.top
         }
         reinsertLeftRight()
     }

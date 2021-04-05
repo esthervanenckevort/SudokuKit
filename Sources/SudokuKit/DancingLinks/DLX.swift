@@ -13,9 +13,9 @@
 
 import Foundation
 
-public class DLX {
+public final class DLX {
     private var header: ColumnNode
-    private var answer = [DancingNode]()
+    private var answer = ContiguousArray<DancingNode>()
     private var solutions = 0
 
     public init?(cover: [[Int]]) {
@@ -28,11 +28,11 @@ public class DLX {
             columnNodes.append(node)
             headerNode = headerNode.linkRight(node) as! ColumnNode
         }
-        guard let temp = headerNode.right?.column else { return nil }
+        guard let temp = headerNode.right.column else { return nil }
         headerNode = temp
 
         for grid in cover {
-            var previous: DancingNode? = nil
+            var previous: DancingNode! = nil
 
             for (index, cell) in grid.enumerated() {
                 guard cell == 1 else { continue }
@@ -42,31 +42,31 @@ public class DLX {
                 if previous == nil {
                     previous = newNode
                 }
-                _ = column.top?.linkDown(newNode)
-                previous = previous?.linkRight(newNode)
+                _ = column.top.linkDown(newNode)
+                previous = previous.linkRight(newNode)
                 column.size += 1
             }
         }
         header = headerNode
     }
 
-    public func solve(handler: ([DancingNode]) -> ()) {
+    public func solve(handler: (ContiguousArray<DancingNode>) -> ()) {
 
         if header.right == header {
             handler(answer)
             solutions += 1
         } else {
-            var column: ColumnNode! = selectColumn()
+            var column = selectColumn()
             column.cover()
 
-            var line: DancingNode! = column.bottom
+            var line = column.bottom
             while (line != column) {
                 answer.append(line)
 
                 var rightNode = line.right
                 while (rightNode != line) {
-                    rightNode?.column?.cover()
-                    rightNode = rightNode?.right
+                    rightNode.column.cover()
+                    rightNode = rightNode.right
                 }
 
                 solve(handler: handler)
@@ -75,8 +75,8 @@ public class DLX {
 
                 var leftNode = line.left
                 while (leftNode != line) {
-                    leftNode?.column?.uncover()
-                    leftNode = leftNode?.left
+                    leftNode.column.uncover()
+                    leftNode = leftNode.left
                 }
 
                 line = line.bottom
