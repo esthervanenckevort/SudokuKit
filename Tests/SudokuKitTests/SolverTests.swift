@@ -48,11 +48,9 @@ final class SolverTests: XCTestCase {
     func testSolveSimpleCases() {
         let sudoku = Sudoku()
         let boards = Board.simple()
-        measure {
-            for board in boards {
-                let results = sudoku.solve(puzzle: board)
-                XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
-            }
+        for board in boards {
+            let results = sudoku.solve(puzzle: board)
+            XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
         }
     }
     
@@ -82,10 +80,8 @@ final class SolverTests: XCTestCase {
 
     func testDiabolical() {
         let sudoku = Sudoku()
-        measure {
-            let results = sudoku.solve(puzzle: Board.board12)
-            XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
-        }
+        let results = sudoku.solve(puzzle: Board.board12)
+        XCTAssert(results.count == 1, "Solver should return exactly one result, but received \(results.count) results.")
     }
 
     func testSolveSolvedPuzzle() {

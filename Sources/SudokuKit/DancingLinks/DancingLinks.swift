@@ -13,10 +13,9 @@
 
 import Foundation
 
-public final class DLX {
+public final class DancingLinks {
     private var header: ColumnNode
     private var answer = ContiguousArray<DancingNode>()
-    private var solutions = 0
 
     public init?(cover: [[Int]]) {
         guard let columns = cover.first?.count else { return nil }
@@ -28,8 +27,7 @@ public final class DLX {
             columnNodes.append(node)
             headerNode = headerNode.linkRight(node) as! ColumnNode
         }
-        guard let temp = headerNode.right.column else { return nil }
-        headerNode = temp
+        headerNode = headerNode.right.column
 
         for grid in cover {
             var previous: DancingNode! = nil
@@ -47,14 +45,13 @@ public final class DLX {
                 column.size += 1
             }
         }
+        headerNode.size = columns
         header = headerNode
     }
 
     public func solve(handler: (ContiguousArray<DancingNode>) -> ()) {
-
         if header.right == header {
             handler(answer)
-            solutions += 1
         } else {
             var column = selectColumn()
             column.cover()
@@ -70,7 +67,7 @@ public final class DLX {
                 }
 
                 solve(handler: handler)
-                answer.removeLast()
+                line = answer.removeLast()
                 column = line.column
 
                 var leftNode = line.left
@@ -90,13 +87,13 @@ public final class DLX {
         var min = Int.max
         var selected: ColumnNode!
         var temp: ColumnNode = header.right as! ColumnNode
-        repeat {
+        while temp != header {
             if temp.size < min {
                 min = temp.size
                 selected = temp
             }
             temp = temp.right as! ColumnNode
-        } while temp != header
+        }
         return selected
     }
 }

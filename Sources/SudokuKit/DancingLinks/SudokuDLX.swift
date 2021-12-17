@@ -40,7 +40,7 @@ public final class SudokuDLX {
     public func solve() -> [[[Int]]] {
         let cover = convertToCoverMatrix(grid)
         var solutions = [[[Int]]]()
-        guard let dlx = DLX(cover: cover) else { return solutions }
+        guard let dlx = DancingLinks(cover: cover) else { return solutions }
         dlx.solve {
             solutions.append(convertDLXListToGrid($0))
         }

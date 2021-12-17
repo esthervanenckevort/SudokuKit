@@ -21,14 +21,13 @@ final class PuzzleTests: XCTestCase {
         let sudoku = Sudoku()
         let given = 25
 
-        measure {
-            guard let puzzle = Puzzle(given: given) else {
-                XCTFail("Failed to generate puzzle with \(given) given numbers.")
-                return
-            }
-            XCTAssert(puzzle.board.board.filter { $0 != 0 }.count == given, "Puzzle should have \(given) given numbers.")
-            XCTAssert(sudoku.solve(puzzle: puzzle.board).count == 1, "Puzzle must have exactly one solution.")
-            print(puzzle.board)
+        guard let puzzle = Puzzle(given: given) else {
+            XCTFail("Failed to generate puzzle with \(given) given numbers.")
+            return
         }
+        XCTAssert(puzzle.board.board.filter { $0 != 0 }.count == given, "Puzzle should have \(given) given numbers.")
+        XCTAssert(sudoku.solve(puzzle: puzzle.board).count == 1, "Puzzle must have exactly one solution.")
+        print(puzzle.board)
+
     }
 }

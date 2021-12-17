@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.4
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 //
 // Copyright 2020 Esther van Enckevort
@@ -39,7 +39,7 @@ let package = Package(
         .target(
             name: "SudokuKit",
             dependencies: []),
-        .target(name: "Sudoku",
+        .executableTarget(name: "Sudoku",
             dependencies: [.product(name: "ArgumentParser", package: "swift-argument-parser"), "SudokuKit"]),
         .testTarget(
             name: "SudokuKitTests",

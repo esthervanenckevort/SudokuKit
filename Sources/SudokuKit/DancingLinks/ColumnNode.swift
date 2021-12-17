@@ -43,7 +43,7 @@ final class ColumnNode: DancingNode {
         while (topNode != self) {
             var leftNode = topNode.left
             while (leftNode != topNode) {
-                right.column.size += 1
+                leftNode.column.size += 1
                 leftNode.reinsertTopBottom()
                 leftNode = leftNode.left
             }

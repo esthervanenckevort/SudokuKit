@@ -22,10 +22,7 @@ struct IdGenerator {
     static var shared = IdGenerator()
 }
 
-public class DancingNode: Equatable, CustomStringConvertible {
-    public var description: String {
-        "[\(column.value)]"
-    }
+public class DancingNode: Equatable {
 
     public static func == (lhs: DancingNode, rhs: DancingNode) -> Bool {
         return rhs.id == lhs.id
