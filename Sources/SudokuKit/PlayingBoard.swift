@@ -39,22 +39,6 @@ public struct PlayingBoard {
 
     /// The puzzle represented in this board
     private let puzzle: Puzzle
-    /// The valid values of the Sudoku, for a typical 9x9 Sudoku this will be 1...9
-    private var numbers: ClosedRange<Int> { 1...columns }
-    /// The width of the Sudoku board, for a typical 9x9 Sudoku this will be 9
-    private var columns: Int { Int(sqrt(Double(board.count))) }
-    /// The height of the Sudoku board, for a typical 9x9 Sudoku this will be 9
-    private var rows: Int { columns }
-    /// The width of a single Square, for the typical 9x9 Sudoku this will be 3
-    private var widthOfSquare: Int { Int(sqrt(Double(columns))) }
-    /// The height of a single Square, for the typical 9x9 Sudoku this will be 3
-    private var heightOfSquare: Int { widthOfSquare }
-    /// The number of squares in a row, for the typical 9x9 Sudoku this will be 3
-    private var squaresInRow: Int { widthOfSquare }
-    /// The nukber of squares in a column, for the typical 9x9 Sudoku this will be 3
-    private var squaresInColumn: Int { widthOfSquare }
-    /// The offset of a row of squares, for the typical 9x9 Sudoku this will be 9*3 = 27
-    private var squareRowOffset: Int { columns * widthOfSquare }
 
     /// PlayingBoard on which the player plays.
     private var board: [[CellState]]
@@ -63,14 +47,14 @@ public struct PlayingBoard {
     public private(set) var state = GameState.playing
 
     public subscript(row: Int, column: Int) -> CellState {
-        precondition((0..<columns).contains(row), "The row must be in the range 0..<\(columns).")
-        precondition((0..<rows).contains(column), "The column must be in the range 0..<\(rows).")
+        precondition((0..<puzzle.board.columns).contains(row), "The row must be in the range 0..<\(puzzle.board.columns).")
+        precondition((0..<puzzle.board.rows).contains(column), "The column must be in the range 0..<\(puzzle.board.rows).")
         return board[row][column]
     }
 
     public mutating func mark(row: Int, column: Int, with value: Int, asAnnotation annotating: Bool = false) {
-        precondition((0..<columns).contains(row), "The row must be in the range 0..<\(columns).")
-        precondition((0..<rows).contains(column), "The column must be in the range 0..<\(rows).")
+        precondition((0..<puzzle.board.columns).contains(row), "The row must be in the range 0..<\(puzzle.board.columns).")
+        precondition((0..<puzzle.board.rows).contains(column), "The column must be in the range 0..<\(puzzle.board.rows).")
         guard state == .playing else { return }
         switch board[row][column] {
         case .fixed(_):
@@ -109,14 +93,14 @@ public struct PlayingBoard {
             case .column:
                 return (row: offset, column: column)
             case .square:
-                let firstColumn = column / widthOfSquare * widthOfSquare
-                let firstRow = row / widthOfSquare * widthOfSquare
-                return (row: firstRow + offset / widthOfSquare, column: firstColumn + offset % widthOfSquare)
+                let firstColumn = column / puzzle.board.widthOfSquare * puzzle.board.widthOfSquare
+                let firstRow = row / puzzle.board.widthOfSquare * puzzle.board.widthOfSquare
+                return (row: firstRow + offset / puzzle.board.widthOfSquare, column: firstColumn + offset % puzzle.board.widthOfSquare)
             }
         }
 
         for target in Target.allCases {
-            for offset in 0..<columns {
+            for offset in 0..<puzzle.board.columns {
                 let (currentRow, currentColumn) = convert(offset: offset, to: target)
                 guard !(currentColumn == column && currentRow == row) else { continue }
                 switch board[currentRow][currentColumn] {
@@ -141,8 +125,8 @@ public struct PlayingBoard {
         guard state == .playing else { return state }
         var solution = [Int]()
         solution.reserveCapacity(board.count)
-        for row in 0..<rows {
-            for column in 0..<columns {
+        for row in 0..<puzzle.board.rows {
+            for column in 0..<puzzle.board.columns {
                 switch board[row][column] {
                 case .fixed(let value), .solution(let value):
                     solution.append(value)
@@ -165,8 +149,8 @@ public struct PlayingBoard {
     ///   - column: The column in the range 0...8 of the cell to check
     /// - Returns: Returns nil if the game is still in play or true if the position is correct, false if it is incorrect
     public func isCorrect(row: Int, column: Int) -> Bool? {
-        precondition((0..<rows).contains(row), "The row must be in the range 0..<\(rows).")
-        precondition((0..<columns).contains(column), "The column must be in the range 0..<\(columns).")
+        precondition((0..<puzzle.board.rows).contains(row), "The row must be in the range 0..<\(puzzle.board.rows).")
+        precondition((0..<puzzle.board.columns).contains(column), "The column must be in the range 0..<\(puzzle.board.columns).")
         guard state != .playing else { return nil }
         switch board[row][column] {
         case .fixed(_):
@@ -174,7 +158,7 @@ public struct PlayingBoard {
         case .annotations(_):
             return false
         case .solution(let value):
-            return value == puzzle.solution[row * columns + column]
+            return value == puzzle.solution[row * puzzle.board.columns + column]
         }
     }
 
@@ -186,9 +170,9 @@ public struct PlayingBoard {
     ///   - column: The column in the range 0...8 of the cell to check
     /// - Returns: If the value is valid this will return true, false otherwise.
     public func isValidOption(value: Int, forRow row: Int, column: Int) -> Bool {
-        precondition((1...columns).contains(value), "The value must be in the range 1...\(columns).")
-        precondition((0..<rows).contains(row), "The row must be in the range 0..<\(rows).")
-        precondition((0..<columns).contains(column), "The column must be in the range 0..<\(columns).")
+        precondition((1...puzzle.board.columns).contains(value), "The value must be in the range 1...\(puzzle.board.columns).")
+        precondition((0..<puzzle.board.rows).contains(row), "The row must be in the range 0..<\(puzzle.board.rows).")
+        precondition((0..<puzzle.board.columns).contains(column), "The column must be in the range 0..<\(puzzle.board.columns).")
         return !inRow(value: value, row: row) && !inColumn(value: value, column: column) && !inSquare(value: value, row: row, column: column)
     }
 
@@ -197,7 +181,7 @@ public struct PlayingBoard {
     /// - Parameter row: The row to check (range 0...8)
     /// - Returns:  If the value is valid this will return true, false otherwise.
     private func inRow(value: Int, row: Int) -> Bool {
-        for index in 0..<columns {
+        for index in 0..<puzzle.board.columns {
             guard check(row: row, column: index, with: value) else { continue }
             return true
         }
@@ -209,7 +193,7 @@ public struct PlayingBoard {
     /// - Parameter column: The column to check (range 0...8)
     /// - Returns:If the value is present this will return true, false otherwise.
     private func inColumn(value: Int, column: Int) -> Bool {
-        for index in 0..<rows {
+        for index in 0..<puzzle.board.rows {
             guard check(row: index, column: column, with: value) else { continue }
             return true
         }
@@ -223,10 +207,10 @@ public struct PlayingBoard {
     ///   - column: The column to check (range 0...8)
     /// - Returns: If the value is present this will return true, false otherwise.
     private func inSquare(value: Int, row: Int, column: Int) -> Bool {
-        let topRow = row / widthOfSquare * widthOfSquare
-        let bottomRow = topRow + widthOfSquare - 1
-        let leftColumn = column / heightOfSquare * heightOfSquare
-        let rightColumn = leftColumn + heightOfSquare - 1
+        let topRow = row / puzzle.board.widthOfSquare * puzzle.board.widthOfSquare
+        let bottomRow = topRow + puzzle.board.widthOfSquare - 1
+        let leftColumn = column / puzzle.board.heightOfSquare * puzzle.board.heightOfSquare
+        let rightColumn = leftColumn + puzzle.board.heightOfSquare - 1
         
         for row in topRow...bottomRow {
             for column in leftColumn...rightColumn {
@@ -267,13 +251,12 @@ public struct PlayingBoard {
     public init(puzzle: Puzzle) {
         self.puzzle = puzzle
         board = [[CellState]]()
-        board.reserveCapacity(puzzle.board.board.count)
-        for index in 0..<board.count {
-            if index % columns == 0 {
+        for index in 0..<puzzle.board.board.count {
+            if index % puzzle.board.columns == 0 {
                 board.append([CellState]())
             }
             let cell = puzzle.board[index] == 0 ? CellState.annotations(Set()) : CellState.fixed(puzzle.board[index])
-            board[index / rows].append(cell)
+            board[index / puzzle.board.rows].append(cell)
         }
     }
 }

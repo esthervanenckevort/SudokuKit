@@ -19,21 +19,21 @@ import Foundation
 public struct Board {
     public private(set) var board: [Int]
     /// The valid values of the Sudoku, for a typical 9x9 Sudoku this will be 1...9
-    private var numbers: ClosedRange<Int> { 1...columns }
+    public var numbers: ClosedRange<Int> { 1...columns }
     /// The width of the Sudoku board, for a typical 9x9 Sudoku this will be 9
-    private var columns: Int { Int(sqrt(Double(board.count))) }
+    public var columns: Int { Int(sqrt(Double(board.count))) }
     /// The height of the Sudoku board, for a typical 9x9 Sudoku this will be 9
-    private var rows: Int { columns }
+    public var rows: Int { columns }
     /// The width of a single Square, for the typical 9x9 Sudoku this will be 3
-    private var widthOfSquare: Int { Int(sqrt(Double(columns))) }
+    public var widthOfSquare: Int { Int(sqrt(Double(columns))) }
     /// The height of a single Square, for the typical 9x9 Sudoku this will be 3
-    private var heightOfSquare: Int { widthOfSquare }
+    public var heightOfSquare: Int { widthOfSquare }
     /// The number of squares in a row, for the typical 9x9 Sudoku this will be 3
-    private var squaresInRow: Int { widthOfSquare }
+    public var squaresInRow: Int { widthOfSquare }
     /// The nukber of squares in a column, for the typical 9x9 Sudoku this will be 3
-    private var squaresInColumn: Int { widthOfSquare }
+    public var squaresInColumn: Int { widthOfSquare }
     /// The offset of a row of squares, for the typical 9x9 Sudoku this will be 9*3 = 27
-    private var squareRowOffset: Int { columns * widthOfSquare }
+    public var squareRowOffset: Int { columns * widthOfSquare }
 
 
 
