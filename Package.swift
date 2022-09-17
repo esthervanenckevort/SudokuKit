@@ -38,12 +38,11 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "SudokuKit",
-            dependencies: []),
+            resources: [.copy("games")]),
         .executableTarget(name: "Sudoku",
             dependencies: [.product(name: "ArgumentParser", package: "swift-argument-parser"), "SudokuKit"]),
         .testTarget(
             name: "SudokuKitTests",
-            dependencies: ["SudokuKit"],
-            resources: [.copy("testcases")]),
+            dependencies: ["SudokuKit"]),
     ]
 )

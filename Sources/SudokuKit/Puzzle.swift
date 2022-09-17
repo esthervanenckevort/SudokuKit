@@ -68,6 +68,10 @@ public struct Puzzle {
 
     }
 
+    public init?(level: Board.Level) {
+        self.init(board: Board.randomBoard(for: level))
+    }
+
     public init?(board: Board) {
         let sudoku = Sudoku()
         let solutions = sudoku.solve(puzzle: board)

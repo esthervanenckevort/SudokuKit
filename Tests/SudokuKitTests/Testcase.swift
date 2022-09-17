@@ -67,31 +67,20 @@ extension Board {
         0, 0, 2, 8, 0, 0, 0, 0, 7
 
     ])
-//    static let allBoards = [ board1, board2, board3, board4, board5, board6,
-//    board7, board8, board9, board10, board11, board12]
-    static func load(file: String) -> [Board] {
-        let puzzles = try! String(contentsOf: Bundle.module.url(forResource: "testcases/\(file)", withExtension: "txt")!)
-        var boards = [Board]()
-        for puzzle in puzzles.split(separator: "\n") {
-            let board = puzzle.replacingOccurrences(of: ".", with: "0").compactMap { Int(String($0)) }
-            boards.append(Board(board: board))
-        }
-        return boards
-    }
 
     static func simple() -> [Board] {
-        load(file: "simple")
+        load(level: .simple)
     }
 
     static func easy() -> [Board] {
-        load(file: "easy")
+        load(level: .easy)
     }
 
     static func intermediate() -> [Board] {
-        load(file: "intermediate")
+        load(level: .intermediate)
     }
 
     static func expert() -> [Board] {
-        load(file: "expert")
+        load(level: .expert)
     }
 }

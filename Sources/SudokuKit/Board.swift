@@ -35,7 +35,28 @@ public struct Board {
     /// The offset of a row of squares, for the typical 9x9 Sudoku this will be 9*3 = 27
     public var squareRowOffset: Int { columns * widthOfSquare }
 
+    public enum Level: String {
+        case easy, simple, expert, intermediate
 
+        public func boards() -> [Board] {
+            guard let file = Bundle.module.url(forResource: "games/\(self.rawValue)", withExtension: "txt") else { fatalError("Can't locate resource games/\(self.rawValue).txt in Bundle SudokuKit") }
+            guard let puzzles = try? String(contentsOf: file) else { fatalError("Can't load file for difficulty level \(self.rawValue)")}
+            var boards = [Board]()
+            for puzzle in puzzles.split(separator: "\n") {
+                let board = puzzle.replacingOccurrences(of: ".", with: "0").compactMap { Int(String($0)) }
+                boards.append(Board(board: board))
+            }
+            return boards
+        }
+    }
+
+    public static func load(level: Level) -> [Board] {
+        return level.boards()
+    }
+
+    public static func randomBoard(for level: Level) -> Board {
+        return level.boards().randomElement()!
+    }
 
     /// Initialize a board with the given array.
     ///
